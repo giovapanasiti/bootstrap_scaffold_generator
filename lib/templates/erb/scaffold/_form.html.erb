@@ -1,0 +1,42 @@
+<%= form_with(model: <%= singular_table_name %>, local: true, html: { class: "card p-4 shadow" }) do |form| %>
+  <% if <%= singular_table_name %>.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(<%= singular_table_name %>.errors.count, "error") %> prohibited this <%= singular_table_name %> from being saved:</h4>
+      <ul>
+        <% <%= singular_table_name %>.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%# Dynamically generate form fields based on attribute types %>
+  <% attributes.each do |attribute| -%>
+    <div class="mb-3">
+      <%= form.label attribute.name, class: "form-label" %>
+      <% case attribute.type
+         when :datetime, :timestamp %>
+        <%= form.datetime_field attribute.name, class: "form-control" %>
+      <% when :date %>
+        <%= form.date_field attribute.name, class: "form-control" %>
+      <% when :time %>
+        <%= form.time_field attribute.name, class: "form-control" %>
+      <% when :text %>
+        <%= form.text_area attribute.name, class: "form-control" %>
+      <% when :integer, :decimal, :float %>
+        <%= form.number_field attribute.name, class: "form-control" %>
+      <% when :boolean %>
+        <div class="form-check">
+          <%= form.check_box attribute.name, class: "form-check-input" %>
+        </div>
+      <% else %>
+        <%= form.text_field attribute.name, class: "form-control" %>
+      <% end %>
+    </div>
+  <% end -%>
+
+  <div class="actions">
+    <%= form.submit "Save", class: "btn btn-primary" %>
+    <%= link_to "Cancel", <%= plural_table_name %>_path, class: "btn btn-secondary ms-2" %>
+  </div>
+<% end %>
